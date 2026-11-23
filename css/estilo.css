@@ -25,6 +25,7 @@
   --letra: Verdana, "Trebuchet MS", Arial, sans-serif;
   font-size: 18px;
 }
+body { --destaque: var(--azul); --destaque-claro: var(--azul-claro); }
 body[data-cor="laranja"] { --destaque: var(--laranja); --destaque-claro: var(--laranja-claro); }
 body[data-cor="verde"] { --destaque: var(--verde); --destaque-claro: var(--verde-claro); }
 
@@ -410,6 +411,7 @@ body.contraste .alternar[aria-pressed="true"] .estado::after { background: #00ff
 body.contraste .campo-texto { background: #000; color: #fff; border-color: #fff; }
 body.contraste .pausa { background: #000; color: #fff; }
 body.contraste .estrela.vazia { color: #666; }
+body.contraste .progresso { background: #000; border-color: #fff; }
 body.contraste .estrela.cheia { color: #ffe600; }
 body.contraste .link-professor { color: #fff; }
 body.contraste kbd { background: #000; color: #fff; }

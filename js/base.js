@@ -245,6 +245,7 @@ const App = {
   inicio() { this.pilha = []; this.atual = { nome: "inicio", params: {} }; this.desenhar(); },
   desenhar() {
     Voz.parar();
+    Teclado.ajuda = null; Teclado.setas = null; Teclado.voltar = null;
     const tela = this.telas[this.atual.nome](this.atual.params);
     const main = document.getElementById("tela");
     main.textContent = "";
@@ -260,7 +261,9 @@ const App = {
     window.scrollTo(0, 0);
     const alvo = main.querySelector("[data-foco-inicial]") || main.querySelector("h1, h2");
     if (alvo) { if (!alvo.hasAttribute("tabindex") && !/^(BUTTON|INPUT|A)$/.test(alvo.tagName)) alvo.setAttribute("tabindex", "-1"); focarSemFala(alvo); }
-    if (tela.fala) dizer(tela.fala);
+    const prefixo = this.prefixoFala || "";
+    this.prefixoFala = "";
+    if (tela.fala || prefixo) dizer(juntar([prefixo, tela.fala]));
     if (tela.depois) tela.depois();
   }
 };
@@ -290,11 +293,18 @@ function digitando(e) {
 const Teclado = {
   ajuda: null, // função que devolve a ajuda falada da tela atual
   setas: null, // usado na apresentação: setas para os lados trocam de produção
+  voltar: null, // a tela pode tratar o Esc (devolve true se tratou)
   iniciar() {
     document.addEventListener("keydown", (e) => {
       // F1 liga e desliga o Modo Áudio em qualquer tela.
       if (e.key === "F1") { e.preventDefault(); alternarModoAudio(); return; }
-      if (e.key === "Escape") { e.preventDefault(); if (document.body.classList.contains("pausado")) { Pausa.sair(); } else App.voltar(); return; }
+      if (e.key === "Escape") {
+        e.preventDefault();
+        if (document.body.classList.contains("pausado")) Pausa.sair();
+        else if (!Janela.aberta && Teclado.voltar && Teclado.voltar()) { /* a tela tratou (ex.: passo anterior) */ }
+        else App.voltar();
+        return;
+      }
       if (e.ctrlKey || e.altKey || e.metaKey) return;
       const escrevendo = digitando(e);
       if (Config.v.modoAudio && !escrevendo) {
@@ -340,17 +350,25 @@ function falarAjuda() {
 
 function alternarModoAudio() {
   const ligar = !Config.v.modoAudio;
+  const antes = Voz.ultima;
   Config.mudar("modoAudio", ligar);
-  if (ligar) {
-    Voz.falar("Modo Áudio ligado. Use as setas para andar, Enter para escolher, Esc para voltar, barra de espaço para repetir e H para ajuda.", { forcar: true });
-    anunciar("Modo Áudio ligado.");
-  } else {
+  document.querySelectorAll("[data-config='modoAudio']").forEach(b => b.setAttribute("aria-pressed", String(ligar)));
+  const refazer = App.atual && (App.atual.nome === "inicio" || App.atual.nome === "estudio");
+  if (!ligar) {
+    if (refazer) App.desenhar();
     Voz.parar();
     Voz.falar("Modo Áudio desligado.", { forcar: true, semGuardar: true });
     anunciar("Modo Áudio desligado.");
+    return;
   }
-  document.querySelectorAll("[data-config='modoAudio']").forEach(b => b.setAttribute("aria-pressed", String(ligar)));
-  if (App.atual && App.atual.nome === "estudio") setTimeout(() => App.desenhar(), ligar ? 4500 : 0);
+  const aviso = "Modo Áudio ligado. Setas andam, Enter escolhe, Esc volta, espaço repete e H dá ajuda.";
+  // Na tela inicial e nos estúdios, a tela é refeita (aparecem as opções do Modo Áudio).
+  if (refazer) {
+    App.prefixoFala = aviso;
+    App.desenhar();
+  } else {
+    dizer(juntar([aviso, antes]));
+  }
 }
 
 /* ---------- Pausa ---------- */

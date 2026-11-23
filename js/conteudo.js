@@ -525,7 +525,7 @@ const ESTUDIOS = [
             tipo: "ordenar", prefixo: "Parte",
             pergunta: "Coloque o programa de rádio em ordem.",
             dica: "O programa começa com a vinheta e termina com a despedida.",
-            acerto: "O programa está pronto para ir ao ar!",
+            acerto: "O programa está em ordem. Agora ele pode começar!",
             itens: [
               { texto: "Vinheta", descricao: "Uma música curtinha com o nome da rádio: Rádio do Robô!" },
               { texto: "Apresentação", descricao: "Bom dia! Eu sou a Bia e este é o programa da nossa escola." },
@@ -564,7 +564,7 @@ const ESTUDIOS = [
     comoJogar: [
       { picto: "olho", texto: "Leia a pergunta com atenção." },
       { picto: "pecas", texto: "Para montar a notícia, escolha a peça que responde à pergunta marcada." },
-      { picto: "lupa", texto: "Seja detetive: procure os sinais de notícia falsa." },
+      { picto: "lupa", texto: "Procure os sinais de notícia falsa." },
       { picto: "lampada", texto: "Errou? Leia a dica e tente de novo." },
       { picto: "jornal", texto: "No fim, escreva uma notícia para o Jornal do Robô." }
     ],
@@ -688,7 +688,7 @@ const ESTUDIOS = [
           },
           {
             tipo: "escolha", pergunta: "Você recebeu uma notícia e ficou na dúvida. O que fazer?",
-            dica: "Notícia falsa se espalha quando a gente compartilha.",
+            dica: "Quando a gente compartilha uma notícia falsa, mais pessoas leem a mentira.",
             acerto: "Isso! Na dúvida, pergunte a um adulto e não compartilhe.",
             opcoes: [{ texto: "Compartilhar com todos os amigos." }, { texto: "Perguntar a um adulto e não compartilhar.", certa: true }, { texto: "Mandar correndo para o grupo da família." }]
           }
@@ -702,7 +702,7 @@ const ESTUDIOS = [
             tipo: "ordenar", prefixo: "Parte",
             pergunta: "Coloque o telejornal em ordem.",
             dica: "Começa com os apresentadores dizendo boa tarde e termina com o encerramento.",
-            acerto: "O telejornal está pronto para ir ao ar!",
+            acerto: "O telejornal está em ordem. Agora ele pode começar!",
             itens: [
               { texto: "Abertura com os apresentadores", descricao: "Boa tarde! Começa agora o Jornal do Robô." },
               { texto: "Notícias", descricao: "A horta da escola deu as primeiras alfaces." },

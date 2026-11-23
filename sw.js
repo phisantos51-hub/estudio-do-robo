@@ -3,11 +3,11 @@
   Sempre tenta buscar a versão nova primeiro; sem internet, usa a cópia guardada.
   Não envia nenhum dado para lugar nenhum.
 */
-const CACHE = "estudio-do-robo-v1";
+const CACHE = "estudio-do-robo-v2";
 const ARQUIVOS = [
-  "./", "index.html", "css/estilo.css?v=1",
-  "js/conteudo.js?v=1", "js/desenhos.js?v=1", "js/base.js?v=1",
-  "js/atividades.js?v=1", "js/producoes.js?v=1", "js/telas.js?v=1"
+  "./", "index.html", "css/estilo.css?v=2",
+  "js/conteudo.js?v=2", "js/desenhos.js?v=2", "js/base.js?v=2",
+  "js/atividades.js?v=2", "js/producoes.js?v=2", "js/telas.js?v=2"
 ];
 
 self.addEventListener("install", (e) => {

@@ -105,6 +105,7 @@ const Produtor = {
       progresso.setAttribute("aria-valuenow", String(i));
       textoProgresso.textContent = `Passo ${i + 1} de ${ps.length}`;
       retorno.hidden = true;
+      instalarEsc();
       atualizarPrevia();
       painel.textContent = "";
       const intro = primeira ? atv.intro + " " : "";
@@ -114,6 +115,9 @@ const Produtor = {
     }
 
     function avancar() { i++; mostrar(false); }
+    let concluido = false;
+    // Esc numa produção volta um passo (para não perder o que já foi feito).
+    function instalarEsc() { Teclado.voltar = () => { if (concluido || i === 0) return false; i--; mostrar(false); return true; }; }
     function botaoVoltarPasso() {
       if (i === 0) return null;
       return el("button", { class: "botao", type: "button", onclick: () => { i--; mostrar(false); } }, html(Desenho.picto("voltar")), "Passo anterior");
@@ -264,6 +268,7 @@ const Produtor = {
     }
 
     function concluir(salvou) {
+      concluido = true;
       barra.style.width = "100%";
       textoProgresso.textContent = "Pronto!";
       passosNum.hidden = true;
