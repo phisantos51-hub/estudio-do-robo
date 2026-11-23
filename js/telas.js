@@ -201,7 +201,7 @@ App.registrar("mural", () => {
   SECOES_MURAL.forEach(sec => {
     const daSecao = todas.filter(p => p.tipo === sec.tipo);
     if (!daSecao.length) return;
-    const grade = el("ul", { class: "grade-mural" + (sec.tipo === "noticia" ? " jornal" : "") });
+    const grade = el("ul", { class: "grade-mural grade-" + sec.tipo });
     daSecao.forEach(p => {
       num++;
       const leitura = descreverProducao(p);

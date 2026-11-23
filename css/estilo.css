@@ -296,7 +296,7 @@ textarea.campo-texto { resize: vertical; min-height: 7rem; }
 .secao-mural h2 .picto { color: var(--azul); }
 .contagem { color: var(--suave); font-weight: normal; }
 .grade-mural { list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 1rem; }
-.grade-mural.jornal { grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); }
+.grade-mural.grade-noticia, .grade-mural.grade-fotonovela { grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); }
 .cartao-mural { width: 100%; text-align: left; font: inherit; background: var(--papel); border: 3px solid var(--borda); border-radius: 16px; padding: .7rem; cursor: pointer; box-shadow: var(--sombra); color: var(--texto); }
 .cartao-mural:hover { border-color: var(--azul); }
 .secao-jornal { background: #fbf8f1; border: 3px solid #d8cdb5; border-radius: 22px; padding: 1rem; }
@@ -457,7 +457,7 @@ body.ano1 .balao-html { text-transform: uppercase; }
 .pequena .quadros { gap: .25rem; }
 .pequena .quadro { border-width: 2px; }
 .pequena .balao-html { border-width: 2px; padding: .2em .3em; }
-.tela-cheia .quadros, .grande .quadros { max-width: 1100px; margin: 0 auto; }
+.tela-cheia .quadros, .grande .quadros { max-width: min(1100px, calc((100vh - 230px) / .75)); margin: 0 auto; }
 .tela-cheia .fotonovela-titulo { font-size: 2.2rem; }
 .opcoes.baloes .opcao .visual svg { max-width: 160px; margin: 0 auto; }
 .figura .quadro { max-width: 420px; margin: 0 auto; }
