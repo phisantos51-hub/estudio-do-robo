@@ -422,3 +422,70 @@ DEFINICOES.fotonovela = {
     return juntar(partes);
   }
 };
+
+/* ============================================================
+   NOTÍCIA (3º ano) — publicada no Jornal do Robô
+   ============================================================ */
+function primeiraMaiuscula(t) { t = String(t || "").trim(); return t ? t[0].toUpperCase() + t.slice(1) : ""; }
+function semPonto(t) { return String(t || "").trim().replace(/[.!?]+$/, ""); }
+function minusculaInicial(t) { t = semPonto(t); return t && !/^[A-ZÀ-Ú]{2}/.test(t) ? t[0].toLowerCase() + t.slice(1) : t; }
+
+DEFINICOES.noticia = {
+  nome: "Notícia", nomeMural: "notícia",
+  inicial: () => ({ ilustracao: null, oque: "", quem: "", quando: "", onde: "", manchete: "", texto: "" }),
+  passos(d) {
+    const op = OPCOES_PRODUCAO.noticia;
+    const texto = (campo, titulo, rotulo, ajuda, sugestoes, extra) => Object.assign({
+      tipo: "texto", titulo, rotulo, ajuda, sugestoes, max: 80, valorAtual: d[campo], aplicar: (v) => { d[campo] = v; }
+    }, extra || {});
+    return [
+      {
+        tipo: "unica", titulo: "Sobre o que é a sua notícia? Escolha a ilustração.",
+        opcoes: op.ilustracoes.map(il => ({ valor: il.id, rotulo: il.nome, visual: Desenho.cena(il.desenho), fala: juntar([il.nome, il.descricao]) })),
+        valorAtual: d.ilustracao, aplicar: (v) => { d.ilustracao = v; }
+      },
+      texto("oque", "Pergunta-guia 1: O que aconteceu?", "O que aconteceu", "Conte o fato principal.", op.sugestoes.oque),
+      texto("quem", "Pergunta-guia 2: Quem participou?", "Quem participou", "Diga quem estava lá. Use só o primeiro nome ou o nome da turma.", op.sugestoes.quem),
+      texto("quando", "Pergunta-guia 3: Quando aconteceu?", "Quando aconteceu", "Diga o dia ou a hora.", op.sugestoes.quando),
+      texto("onde", "Pergunta-guia 4: Onde aconteceu?", "Onde aconteceu", "Diga o lugar.", op.sugestoes.onde),
+      texto("manchete", "Escreva a manchete.", "Manchete", "A manchete é o título da notícia: uma frase curta e verdadeira, sem exagero.", null, { max: 60 }),
+      texto("texto", "Escreva o texto da notícia.", "Texto da notícia",
+        "Já começamos o texto com as suas respostas. Você pode mudar e completar.", null,
+        { multilinha: true, max: 400, valorAtual: d.texto || this.rascunho(d) })
+    ];
+  },
+  rascunho(d) {
+    const partes = [];
+    if (d.oque) partes.push(primeiraMaiuscula(semPonto(d.oque)) + ".");
+    if (d.quem) partes.push("Participaram: " + minusculaInicial(d.quem) + ".");
+    if (d.quando || d.onde) partes.push(primeiraMaiuscula([minusculaInicial(d.quando), minusculaInicial(d.onde)].filter(Boolean).join(", ")) + ".");
+    return partes.join(" ");
+  },
+  ilustracao(d) { return OPCOES_PRODUCAO.noticia.ilustracoes.find(i => i.id === d.ilustracao); },
+  renderizar(d, leitura, tamanho) {
+    const il = this.ilustracao(d);
+    const caixa = el("div", { class: "jornal" });
+    caixa.append(el("p", { class: "jornal-nome" }, "Jornal do Robô"));
+    caixa.append(el("h3", { class: "jornal-manchete" + (d.manchete ? "" : " vazio-aviso") }, d.manchete || "Manchete?"));
+    if (il) caixa.append(el("figure", { class: "jornal-figura", html: Desenho.cena(il.desenho, il.descricao) }));
+    else caixa.append(el("div", { class: "aviso-imagem-vazia" }, "Ilustração?"));
+    const texto = d.texto || this.rascunho(d);
+    caixa.append(el("p", { class: "jornal-texto" + (texto ? "" : " vazio-aviso") }, texto || "Texto?"));
+    if (tamanho !== "pequena") {
+      const ficha = el("dl", { class: "jornal-ficha" });
+      [["oque", "O quê"], ["quem", "Quem"], ["quando", "Quando"], ["onde", "Onde"]].forEach(([c, n]) => { if (d[c]) ficha.append(el("dt", null, n + ":"), el("dd", null, d[c])); });
+      if (ficha.children.length) caixa.append(ficha);
+    }
+    return caixa;
+  },
+  previa(d) { return this.renderizar(d, "", "previa"); },
+  descrever(d, nome) {
+    const il = this.ilustracao(d);
+    return juntar([
+      "Notícia do Jornal do Robô" + (nome ? `, escrita por ${nome}` : ""),
+      d.manchete ? "Manchete: " + d.manchete : "Ainda sem manchete",
+      il ? "Ilustração: " + il.descricao : "",
+      (d.texto || this.rascunho(d)) ? "Texto: " + (d.texto || this.rascunho(d)) : ""
+    ]);
+  }
+};

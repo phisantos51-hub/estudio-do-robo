@@ -68,6 +68,17 @@ const MENSAGENS = {
   privacidade: "Escreva só o seu primeiro nome ou apelido. Não escreva sobrenome, endereço ou telefone."
 };
 
+/* ---------- Partes da notícia (atividade "montar" do 3º ano) ---------- */
+const PARTES_NOTICIA = {
+  manchete: { nome: "Manchete", pergunta: "Qual peça é a manchete, o título da notícia?", dica: "A manchete é curta e conta o assunto." },
+  quem:     { nome: "Quem",     pergunta: "Qual peça conta quem participou?", dica: "Procure pessoas ou turmas." },
+  oque:     { nome: "O quê",    pergunta: "Qual peça conta o que aconteceu?", dica: "Procure o que as pessoas fizeram." },
+  quando:   { nome: "Quando",   pergunta: "Qual peça conta quando aconteceu?", dica: "Procure um dia ou uma hora." },
+  onde:     { nome: "Onde",     pergunta: "Qual peça conta onde aconteceu?", dica: "Procure um lugar." },
+  como:     { nome: "Como",     pergunta: "Qual peça conta como aconteceu?", dica: "Procure o jeito que aconteceu." },
+  porque:   { nome: "Por quê",  pergunta: "Qual peça conta por que aconteceu?", dica: "Procure o motivo. Muitas vezes começa com: para." }
+};
+
 /* ---------- Instruções em passos numerados (com pictogramas) ---------- */
 const PASSOS = {
   escolha:     [{ picto: "olho", texto: "Olhe a pergunta." }, { picto: "clique", texto: "Clique na resposta." }, { picto: "estrela", texto: "Ganhe estrelas." }],
@@ -542,6 +553,183 @@ const ESTUDIOS = [
         intro: "Agora é a sua vez! Crie uma fotonovela de 4 quadros para o Mural da Emissora."
       }
     ]
+  },
+  /* ---------------------------------------------------------- */
+  /*  3º ANO — REDAÇÃO DO JORNAL                                 */
+  /* ---------------------------------------------------------- */
+  {
+    ano: 3, id: "jornal", nome: "Redação do Jornal", tema: "Produzir notícia",
+    cor: "verde", picto: "jornal", maiusculas: false,
+    boasVindas: "Bem-vindo à Redação do Jornal! Aqui a gente escreve notícias e aprende a desconfiar de notícias falsas.",
+    comoJogar: [
+      { picto: "olho", texto: "Leia a pergunta com atenção." },
+      { picto: "pecas", texto: "Para montar a notícia, escolha a peça que responde à pergunta marcada." },
+      { picto: "lupa", texto: "Seja detetive: procure os sinais de notícia falsa." },
+      { picto: "lampada", texto: "Errou? Leia a dica e tente de novo." },
+      { picto: "jornal", texto: "No fim, escreva uma notícia para o Jornal do Robô." }
+    ],
+    atividades: [
+      {
+        id: "partes", nome: "Partes da notícia", picto: "pecas",
+        intro: "Toda notícia responde a perguntas: quem, o quê, quando e onde. As mais completas também contam como e por quê.",
+        etapas: [
+          {
+            tipo: "montar", pergunta: "Monte a notícia das árvores.",
+            dica: "Leia a pergunta marcada e procure a peça que responde a ela.",
+            acerto: "A notícia está completa!",
+            // Partes possíveis: manchete, quem, oque, quando, onde, como, porque
+            partes: [
+              { id: "manchete", texto: "Escola planta 10 árvores no pátio" },
+              { id: "quem", texto: "Os alunos do 3º ano e a professora Rita" },
+              { id: "oque", texto: "plantaram 10 árvores" },
+              { id: "quando", texto: "Na quinta-feira de manhã" },
+              { id: "onde", texto: "No pátio da escola" }
+            ]
+          },
+          {
+            tipo: "montar", pergunta: "Monte a notícia da horta.",
+            dica: "Leia a pergunta marcada e procure a peça que responde a ela.",
+            acerto: "Muito bem! Mais uma notícia completa.",
+            partes: [
+              { id: "manchete", texto: "Horta da escola dá as primeiras alfaces" },
+              { id: "quem", texto: "A merendeira e os alunos do 2º ano" },
+              { id: "oque", texto: "colheram 20 alfaces" },
+              { id: "quando", texto: "Na segunda-feira" },
+              { id: "onde", texto: "Na horta, atrás da quadra" }
+            ]
+          },
+          {
+            tipo: "montar", pergunta: "Desafio: monte uma notícia com como e por quê.",
+            dica: "Como conta o jeito que aconteceu. Por quê conta o motivo.",
+            acerto: "Você montou uma notícia completa, com como e por quê!",
+            partes: [
+              { id: "manchete", texto: "Campeonato de futebol ajuda a sala de leitura" },
+              { id: "quem", texto: "As turmas do 3º ano" },
+              { id: "oque", texto: "fizeram um campeonato de futebol" },
+              { id: "quando", texto: "No sábado à tarde" },
+              { id: "onde", texto: "Na quadra da escola" },
+              { id: "como", texto: "Cada pessoa da torcida trouxe um livro para entrar" },
+              { id: "porque", texto: "Para ter mais livros na sala de leitura" }
+            ]
+          }
+        ]
+      },
+      {
+        id: "fatoOpiniao", nome: "Fato ou opinião", picto: "fatoOpiniao",
+        intro: "Fato é o que aconteceu e dá para conferir. Opinião é o que alguém pensa ou sente.",
+        etapas: [
+          {
+            tipo: "classificar", nomeItem: "Frase",
+            pergunta: "Esta frase é um fato ou uma opinião?",
+            dica: "Pergunte: dá para conferir? Se dá, é fato. Se é o que alguém acha, é opinião.",
+            acerto: "Você separou os fatos das opiniões.",
+            categorias: [
+              { id: "fato", nome: "Fato", descricao: "Conta o que aconteceu. Dá para conferir.", picto: "certo" },
+              { id: "opiniao", nome: "Opinião", descricao: "Mostra o que alguém pensa ou sente.", picto: "balao" }
+            ],
+            itens: [
+              { texto: "A escola plantou 10 árvores.", cat: "fato" },
+              { texto: "As árvores ficaram lindas.", cat: "opiniao" },
+              { texto: "O recreio começa às 10 horas.", cat: "fato" },
+              { texto: "O recreio é a melhor hora do dia.", cat: "opiniao" },
+              { texto: "A sala de leitura tem 300 livros.", cat: "fato" },
+              { texto: "Os livros de aventura são os mais legais.", cat: "opiniao" },
+              { texto: "Choveu na segunda-feira.", cat: "fato" },
+              { texto: "Dia de chuva é chato.", cat: "opiniao" }
+            ]
+          }
+        ]
+      },
+      {
+        id: "detetive", nome: "Detetive de notícias", picto: "lupa",
+        intro: "Algumas notícias são falsas ou exageradas. Outras são propaganda disfarçada. Vamos procurar os sinais. Na dúvida, pergunte a um adulto e não compartilhe.",
+        etapas: [
+          {
+            tipo: "escolha", pergunta: "Esta notícia parece confiável?",
+            mostrar: { noticia: { manchete: "URGENTE!!! A ESCOLA VAI FECHAR PARA SEMPRE AMANHÃ!!!", texto: "Mande para todo mundo agora! Compartilhe antes que apaguem!", fonte: "", data: "" } },
+            dica: "Olhe as letras, os pontos de exclamação e o pedido para compartilhar.",
+            acerto: "Isso! Ela tem sinais de notícia falsa. Na dúvida, pergunte a um adulto e não compartilhe.",
+            opcoes: [{ texto: "Sim, parece confiável." }, { texto: "Não. Tem sinais de notícia falsa ou exagerada.", certa: true }, { texto: "É propaganda de um produto." }]
+          },
+          {
+            tipo: "escolha", pergunta: "Que sinais mostram que ela pode ser falsa?",
+            mostrar: { noticia: { manchete: "URGENTE!!! A ESCOLA VAI FECHAR PARA SEMPRE AMANHÃ!!!", texto: "Mande para todo mundo agora! Compartilhe antes que apaguem!", fonte: "", data: "" } },
+            dica: "Notícia de verdade não precisa gritar nem pedir pressa.",
+            acerto: "Muito bem! Letras maiúsculas, muitas exclamações e pressa para compartilhar são sinais de alerta.",
+            opcoes: [{ texto: "Letras maiúsculas, muitas exclamações e pedido urgente para compartilhar.", certa: true }, { texto: "Ela tem fonte e data." }, { texto: "O texto é calmo e explica tudo." }]
+          },
+          {
+            tipo: "escolha", pergunta: "Esta notícia parece confiável?",
+            mostrar: { noticia: { site: "Jornal do Bairro", manchete: "Sala de leitura recebe 50 livros novos", texto: "Os livros foram doados pelas famílias e já podem ser emprestados na sala de leitura da escola.", fonte: "Jornal do Bairro", data: "10/03/2026" } },
+            dica: "Veja se ela tem fonte, data e se o texto combina com o título.",
+            acerto: "Isso! Ela tem fonte, data, e o texto combina com o título.",
+            opcoes: [{ texto: "Sim, parece confiável.", certa: true }, { texto: "Não. Tem sinais de notícia falsa ou exagerada." }, { texto: "É propaganda de um produto." }]
+          },
+          {
+            tipo: "escolha", pergunta: "Esta notícia parece confiável?",
+            mostrar: { noticia: { manchete: "Cientistas dizem que comer chocolate faz voar", texto: "Quem come três chocolates por dia consegue voar. Ninguém sabe o nome dos cientistas.", fonte: "", data: "" } },
+            dica: "Pessoas conseguem voar comendo chocolate? Ela tem fonte e data?",
+            acerto: "Muito bem! Ela não tem fonte nem data e conta uma coisa impossível.",
+            opcoes: [{ texto: "Sim, parece confiável." }, { texto: "Não. Não tem fonte nem data e conta algo impossível.", certa: true }, { texto: "É propaganda de um produto." }]
+          },
+          {
+            tipo: "escolha", pergunta: "O que é esta notícia?",
+            mostrar: { noticia: { site: "Loja Pulo Alto", manchete: "Pesquisa revela: tênis Pulo Alto deixa as crianças mais inteligentes!", texto: "Compre já o seu tênis Pulo Alto com desconto! Só hoje!", fonte: "Loja Pulo Alto", data: "hoje" } },
+            dica: "Quem escreveu essa notícia? O que ela quer que você faça?",
+            acerto: "Isso! É propaganda disfarçada de notícia: ela quer vender um tênis.",
+            opcoes: [{ texto: "Uma notícia confiável sobre ciência." }, { texto: "Propaganda disfarçada de notícia: ela quer vender um produto.", certa: true }, { texto: "Uma previsão do tempo." }]
+          },
+          {
+            tipo: "escolha", pergunta: "O que está errado nesta notícia?",
+            mostrar: { noticia: { site: "Jornal da Escola", manchete: "Dinossauro gigante invade o pátio da escola!", texto: "Os alunos do 3º ano fizeram uma exposição de dinossauros de massinha no pátio.", fonte: "Jornal da Escola", data: "02/09/2026" } },
+            dica: "Leia o título e depois o texto. Eles contam a mesma coisa?",
+            acerto: "Muito bem! O título exagera e não combina com o texto.",
+            opcoes: [{ texto: "Não tem data." }, { texto: "Nada, está tudo certo." }, { texto: "O título é exagerado e não combina com o texto.", certa: true }]
+          },
+          {
+            tipo: "escolha", pergunta: "Você recebeu uma notícia e ficou na dúvida. O que fazer?",
+            dica: "Notícia falsa se espalha quando a gente compartilha.",
+            acerto: "Isso! Na dúvida, pergunte a um adulto e não compartilhe.",
+            opcoes: [{ texto: "Compartilhar com todos os amigos." }, { texto: "Perguntar a um adulto e não compartilhar.", certa: true }, { texto: "Mandar correndo para o grupo da família." }]
+          }
+        ]
+      },
+      {
+        id: "telejornal", nome: "Roteiro do telejornal", picto: "tv",
+        intro: "O telejornal tem partes, uma depois da outra. Vamos organizar o Jornal do Robô na TV da escola.",
+        etapas: [
+          {
+            tipo: "ordenar", prefixo: "Parte",
+            pergunta: "Coloque o telejornal em ordem.",
+            dica: "Começa com os apresentadores dizendo boa tarde e termina com o encerramento.",
+            acerto: "O telejornal está pronto para ir ao ar!",
+            itens: [
+              { texto: "Abertura com os apresentadores", descricao: "Boa tarde! Começa agora o Jornal do Robô." },
+              { texto: "Notícias", descricao: "A horta da escola deu as primeiras alfaces." },
+              { texto: "Entrevista", descricao: "Conversamos com a merendeira sobre a horta." },
+              { texto: "Previsão do tempo", descricao: "Amanhã vai fazer sol, com algumas nuvens." },
+              { texto: "Encerramento", descricao: "O Jornal do Robô fica por aqui. Até amanhã!" }
+            ]
+          },
+          {
+            tipo: "escolha", pergunta: "Qual manchete deve abrir o telejornal?",
+            dica: "A manchete de abertura é clara, verdadeira e conta o mais importante.",
+            acerto: "Isso! Ela é clara e conta o mais importante, sem exagero.",
+            opcoes: [{ texto: "Horta da escola dá as primeiras alfaces", certa: true }, { texto: "VOCÊ NÃO VAI ACREDITAR!!!" }, { texto: "Coisas aconteceram por aí" }]
+          },
+          {
+            tipo: "escolha", pergunta: "O que a previsão do tempo conta?",
+            dica: "Previsão é sobre o tempo de amanhã: sol, chuva, frio ou calor.",
+            acerto: "Muito bem! A previsão conta como o tempo vai ficar.",
+            opcoes: [{ texto: "O placar do jogo de futebol." }, { texto: "Se vai fazer sol, chuva, frio ou calor.", certa: true }, { texto: "O cardápio do lanche." }]
+          }
+        ]
+      },
+      {
+        id: "noticia", nome: "Minha notícia", picto: "lapis", producao: "noticia",
+        intro: "Agora é a sua vez! Escreva uma notícia sobre algo da escola para o Jornal do Robô."
+      }
+    ]
   }
 ];
 
@@ -596,6 +784,33 @@ const OPCOES_PRODUCAO = {
         { texto: "Fale baixinho, a professora está lendo.", sentimento: "calmo" },
         { texto: "Vamos fazer uma surpresa para a turma?", sentimento: "feliz" }
       ]
+    }
+  },
+
+  // 3º ano: notícia para o Jornal do Robô
+  noticia: {
+    ilustracoes: [
+      { id: "arvores", nome: "Plantio de árvores", descricao: "A Lia e o Davi plantando mudas de árvore no parque, com um regador.",
+        desenho: { cenario: "parque", personagens: [{ quem: "menina", sentimento: "feliz" }, { quem: "davi", sentimento: "feliz" }], objetos: [{ obj: "muda", x: 205, frente: true }, { obj: "muda", x: 340, frente: true }, { obj: "regador", x: 300, y: 200, frente: true }] } },
+      { id: "horta", nome: "Horta da escola", descricao: "A merendeira e o Téo ao lado da horta cheia de verduras.",
+        desenho: { cenario: "escola", personagens: [{ quem: "merendeira", sentimento: "feliz" }, { quem: "menino", sentimento: "feliz" }], objetos: [{ obj: "horta", x: 205, y: 262, frente: true }] } },
+      { id: "festa", nome: "Festa na escola", descricao: "Festa na quadra, com bandeirinhas coloridas, fogueira e crianças felizes.",
+        desenho: { cenario: "quadra", personagens: [{ quem: "bia", sentimento: "feliz" }, { quem: "davi", sentimento: "feliz" }], objetos: [{ obj: "bandeirinhas" }, { obj: "fogueira", x: 205, frente: true }] } },
+      { id: "livros", nome: "Sala de leitura", descricao: "A professora da sala de leitura e a Bia com uma pilha de livros.",
+        desenho: { cenario: "salaLeitura", personagens: [{ quem: "professora", sentimento: "feliz" }, { quem: "bia", sentimento: "surpreso" }], objetos: [{ obj: "livros", x: 205, frente: true }] } },
+      { id: "futebol", nome: "Jogo na quadra", descricao: "O Davi e o Téo jogando futebol na quadra.",
+        desenho: { cenario: "quadra", personagens: [{ quem: "davi", sentimento: "feliz" }, { quem: "menino", sentimento: "surpreso" }], objetos: [{ obj: "bola", x: 205, frente: true }] } },
+      { id: "radio", nome: "Rádio da escola", descricao: "O Robô e a Lia apresentando um programa no estúdio de rádio.",
+        desenho: { cenario: "estudio", personagens: [{ quem: "robo", sentimento: "feliz" }, { quem: "menina", sentimento: "feliz" }] } },
+      { id: "chuva", nome: "Dia de chuva", descricao: "Chuva forte na escola. A Bia segura um guarda-chuva vermelho.",
+        desenho: { cenario: "escola", personagens: [{ quem: "bia", sentimento: "surpreso" }], objetos: [{ obj: "chuva" }, { obj: "guardaChuva", x: 225, y: 160, frente: true }] } }
+    ],
+    // ideias que aparecem como botões; a criança também pode escrever
+    sugestoes: {
+      oque: ["A turma plantou árvores", "Teve campeonato de futebol", "A horta deu verduras", "Chegaram livros novos"],
+      quem: ["Os alunos do 3º ano", "A turma e a professora", "Todas as turmas da escola"],
+      quando: ["Ontem", "Na segunda-feira", "Hoje de manhã", "Na semana passada"],
+      onde: ["No pátio", "Na quadra", "Na sala de leitura", "Na horta da escola"]
     }
   }
 };

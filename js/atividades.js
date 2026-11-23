@@ -567,3 +567,101 @@ Motores.classificar = function (et, ctl, intro) {
   const fala = (intro ? intro + " " : "") + et.pergunta + " " + contador.textContent + ": " + (itens[0].texto || itens[0].descricao) + ". Aperte " + opcoesFaladas();
   ctl.apresentar(titulo, fala, () => contador.textContent + ": " + (itens[k] ? itens[k].texto : "") + ". Aperte " + opcoesFaladas());
 };
+
+/* ----- MONTAR: encaixar as partes da notícia no lugar certo ----- */
+Motores.montar = function (et, ctl, intro) {
+  const area = ctl.area;
+  const titulo = el("h2", { class: "pergunta", tabindex: "-1" }, et.pergunta);
+  const molde = el("ol", { class: "molde-noticia", "aria-label": "Notícia sendo montada" });
+  const vagas = et.partes.map(p => {
+    const info = PARTES_NOTICIA[p.id] || { nome: p.id, pergunta: p.id };
+    const v = el("li", { class: "vaga-noticia vaga-" + p.id }, el("span", { class: "vaga-rotulo" }, info.nome + ":"), el("span", { class: "vaga-texto-noticia" }, "?"));
+    molde.append(v);
+    return { p, info, v };
+  });
+  const subpergunta = el("p", { class: "subpergunta", tabindex: "-1" });
+  const monte = el("div", { class: "opcoes so-texto monte", role: "group", "aria-label": "Peças da notícia" });
+  area.append(titulo, el("div", { class: "montar-grade" }, el("div", null, subpergunta, monte), molde));
+  let pos = 0;
+  let restantes = embaralhar(et.partes);
+
+  function listaFalada() { return juntar(restantes.map((p, k) => `Peça ${k + 1}: ${p.texto}`)); }
+
+  function desenhar() {
+    vagas.forEach((x, k) => { x.v.classList.toggle("da-vez", k === pos); x.v.classList.toggle("alvo-soltar", k === pos); });
+    subpergunta.textContent = vagas[pos].info.pergunta;
+    monte.textContent = "";
+    restantes.forEach((p, k) => {
+      const fala = `Peça ${k + 1}: ${p.texto}`;
+      const b = el("button", { class: "opcao", type: "button", "data-num": String(k + 1), "aria-label": fala, "data-fala": fala },
+        el("span", { class: "num", "aria-hidden": "true" }, String(k + 1)), el("span", { class: "opcao-texto" }, p.texto));
+      b.addEventListener("click", () => { if (!foiArraste(b)) escolher(p, b); });
+      tornarArrastavel(b, (alvo) => { if (alvo.classList.contains("da-vez")) escolher(p, b); });
+      monte.append(b);
+    });
+  }
+
+  function escolher(p, b) {
+    const vaga = vagas[pos];
+    if (p.id !== vaga.p.id) {
+      b.classList.add("tentada");
+      ctl.errou(juntar([`Essa peça não responde: ${vaga.info.pergunta}`, vaga.info.dica || et.dica]), () => {
+        const k = restantes.findIndex(r => r.id === vaga.p.id);
+        if (monte.children[k]) monte.children[k].classList.add("ajuda");
+      });
+      return;
+    }
+    Som.tocar("clique");
+    ctl.tentativas = 0;
+    ctl.limparRetorno();
+    vaga.v.classList.add("preenchida");
+    vaga.v.querySelector(".vaga-texto-noticia").textContent = p.texto;
+    restantes = restantes.filter(r => r !== p);
+    pos++;
+    if (pos >= vagas.length) {
+      vagas.forEach(x => x.v.classList.remove("da-vez", "alvo-soltar"));
+      monte.remove();
+      subpergunta.textContent = "A notícia está montada!";
+      ctl.etapaConcluida(et.acerto);
+      return;
+    }
+    desenhar();
+    focarSemFala(subpergunta);
+    dizer(juntar([`Certo! ${vaga.info.nome}: ${p.texto}`, subpergunta.textContent, listaFalada()]));
+  }
+
+  desenhar();
+  const fala = juntar([intro, et.pergunta, subpergunta.textContent]) + " " + listaFalada() + " Escolha com as setas e Enter, ou com os números.";
+  ctl.apresentar(titulo, fala, () => juntar([subpergunta.textContent, listaFalada()]));
+};
+
+/* ----- Notícias fictícias (Detetive de notícias) ----- */
+function maiusculas(t) { const l = (t || "").replace(/[^A-Za-zÀ-ú]/g, ""); return l.length > 6 && l === l.toUpperCase(); }
+function minusculas(t) { return t.toLowerCase().replace(/(^|[.!?]\s+)([a-zà-ú])/g, (m, a, b) => a + b.toUpperCase()); }
+function descreverTexto(t) {
+  // Para a voz: conta quando o texto está todo em maiúsculas ou cheio de exclamações.
+  let extra = [];
+  if (maiusculas(t)) extra.push("escrita toda em letras maiúsculas");
+  const excl = (t.match(/!/g) || []).length;
+  if (excl >= 3) extra.push(`com ${excl} pontos de exclamação`);
+  const limpo = maiusculas(t) ? minusculas(t) : t;
+  return (extra.length ? `(${extra.join(", ")}) ` : "") + limpo.replace(/!{2,}/g, "!");
+}
+function textoDaNoticia(n) {
+  return juntar([
+    "Notícia",
+    "Manchete " + descreverTexto(n.manchete),
+    "Texto: " + descreverTexto(n.texto),
+    n.fonte ? "Fonte: " + n.fonte : "Não tem fonte",
+    n.data ? "Data: " + n.data : "Não tem data"
+  ]);
+}
+function cartaoNoticiaFicticia(n) {
+  return el("article", { class: "noticia-ficticia", role: "img", "aria-label": textoDaNoticia(n) },
+    el("p", { class: "noticia-site", "aria-hidden": "true" }, n.site || "Notícia que chegou no celular"),
+    el("h3", { "aria-hidden": "true" }, n.manchete),
+    el("p", { "aria-hidden": "true" }, n.texto),
+    el("p", { class: "noticia-meta", "aria-hidden": "true" },
+      el("span", { class: n.fonte ? "" : "falta" }, "Fonte: " + (n.fonte || "não tem")),
+      el("span", { class: n.data ? "" : "falta" }, "Data: " + (n.data || "não tem"))));
+}
