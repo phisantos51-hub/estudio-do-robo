@@ -21,6 +21,12 @@ const NOMES_BALOES = { fala: "Balão de fala", pensamento: "Balão de pensamento
 // Desenha a imagem de um item. Se "rotulo" for vazio, a imagem fica escondida dos leitores de tela
 // (porque o botão em volta já tem a descrição).
 function visualDe(item, rotulo) {
+  if (item.quadro) {
+    const q = quadroFotonovela(item.quadro);
+    if (rotulo) { q.setAttribute("role", "img"); q.setAttribute("aria-label", rotulo); }
+    else q.setAttribute("aria-hidden", "true");
+    return el("div", { class: "visual" }, q);
+  }
   let s = "";
   if (item.desenho) s = Desenho.cena(item.desenho, rotulo);
   else if (item.icone) s = Desenho.icone(item.icone, rotulo);
@@ -215,7 +221,7 @@ App.registrar("atividade", (p) => {
   const cab = el("div", { class: "cabecalho-atividade" },
     el("span", { class: "picto-grande", html: Desenho.picto(atv.picto) }),
     el("div", null, el("h1", { tabindex: "-1" }, atv.nome), atv.intro ? el("p", { class: "intro" }, atv.intro) : null));
-  const progresso = el("div", { class: "progresso", role: "progressbar", "aria-label": "Progresso da atividade", "aria-valuemin": "0", "aria-valuemax": String(atv.etapas.length), "aria-valuenow": "0" });
+  const progresso = el("div", { class: "progresso", role: "progressbar", "aria-label": "Progresso da atividade", "aria-valuemin": "0", "aria-valuemax": String((atv.etapas || []).length), "aria-valuenow": "0" });
   const barra = el("div", { class: "progresso-barra" });
   progresso.append(barra);
   const textoProgresso = el("p", { class: "progresso-texto" });
@@ -227,10 +233,11 @@ App.registrar("atividade", (p) => {
 
   const ctl = new Controle(est, atv, chaveAtividade(est, atv), raiz);
   Object.assign(ctl, { area, retorno, barra, progresso, textoProgresso, passos });
+  App.ctl = ctl;
 
   return {
     titulo: est.nome, conteudo: raiz, maiusculas: est.maiusculas, cor: est.cor, comoJogar: est.comoJogar,
-    depois: () => ctl.iniciar()
+    depois: () => { if (atv.pessoas) escolherEntrevistado(ctl); else ctl.iniciar(); }
   };
 });
 
@@ -239,7 +246,85 @@ App.registrar("atividade", (p) => {
    ============================================================ */
 const Motores = {};
 
+/* ----- Entrevista: primeiro a criança escolhe quem vai entrevistar ----- */
+function contrair(prep, nome) {
+  // "de" + "a merendeira" = "da merendeira"; "de" + "o porteiro" = "do porteiro"
+  const m = /^(a|o)\s/i.exec(nome);
+  if (!m) return prep + " " + nome;
+  return (prep === "de" ? "d" : prep === "em" ? "n" : prep + " ") + nome;
+}
+
+function etapasDaEntrevista(atv, pessoa) {
+  const nome = pessoa.nome;
+  return [
+    {
+      tipo: "classificar", nomeItem: "Pergunta",
+      pergunta: `Quais perguntas ajudam a conhecer o trabalho ${contrair("de", nome)}?`,
+      dica: atv.dicaClassificar,
+      acerto: "Você separou as perguntas boas das que não combinam com a entrevista.",
+      categorias: atv.categorias,
+      itens: pessoa.boas.map(t => ({ texto: t, cat: "boa" })).concat(pessoa.ruins.map(t => ({ texto: t, cat: "ruim" })))
+    },
+    {
+      tipo: "ordenar", prefixo: "Pergunta",
+      pergunta: `Coloque a entrevista com ${nome} em ordem.`,
+      dica: atv.dicaOrdenar,
+      acerto: "A entrevista começa com um cumprimento e termina com um agradecimento.",
+      itens: [{ texto: atv.abertura, ordem: 1 }].concat(pessoa.boas.map(t => ({ texto: t, ordem: 2 })), [{ texto: atv.fechamento, ordem: 3 }])
+    }
+  ];
+}
+
+function escolherEntrevistado(ctl) {
+  const atv = ctl.atv;
+  ctl.passos.replaceWith(ctl.passos = caixaPassos("escolha"));
+  ctl.textoProgresso.textContent = "Escolha quem entrevistar";
+  const titulo = el("h2", { class: "pergunta", tabindex: "-1" }, atv.perguntaPessoa);
+  const opcoes = atv.pessoas.map(p => ({ texto: p.nome, desenho: { cenario: p.cenario, personagens: [{ quem: p.quem, sentimento: "feliz" }] }, descricao: p.descricao, pessoa: p }));
+  const g = grupoOpcoes(opcoes, "Pessoa", (op) => {
+    Som.tocar("clique");
+    ctl.etapas = etapasDaEntrevista(atv, op.pessoa);
+    ctl.progresso.setAttribute("aria-valuemax", String(ctl.etapas.length));
+    ctl.mostrarEtapa(false);
+  }, true);
+  ctl.area.append(titulo, g.grade);
+  ctl.apresentar(titulo, juntar([atv.intro, atv.perguntaPessoa]) + " " + juntar(g.falas) + " Escolha com as setas e Enter, ou aperte o número.");
+}
+
 /* ----- ESCOLHA: uma pergunta e algumas opções ----- */
+// Cria os botões de opções (usado na escolha, no aviso e na escolha do entrevistado).
+// aoEscolher(op, botao, grade, opcoes) decide se está certo.
+function grupoOpcoes(opcoesOriginais, prefixo, aoEscolher, manterOrdem) {
+  const opcoes = manterOrdem ? opcoesOriginais.slice() : embaralhar(opcoesOriginais);
+  const temImagem = opcoes.some(o => o.desenho || o.icone || o.emoji || o.balao || o.quadro);
+  const grade = el("div", { class: "opcoes " + (temImagem ? "com-imagem" : "so-texto") + (opcoes.length === 2 ? " duas" : "") + (opcoes.some(o => o.balao) ? " baloes" : ""), role: "group", "aria-label": "Opções" });
+  prefixo = prefixo || "Opção";
+  const falas = [];
+  opcoes.forEach((op, k) => {
+    const n = k + 1;
+    let desc = descricaoDe(op);
+    if (op.texto && (op.desenho || op.icone) && op.descricao) desc = juntar([op.texto, op.descricao]);
+    if (op.emoji && Config.v.modoCalmo && SENTIMENTOS[op.emoji]) desc = SENTIMENTOS[op.emoji].exemplo;
+    const fala = `${prefixo} ${n}: ${desc}`;
+    falas.push(fala);
+    const b = el("button", { class: "opcao", type: "button", "data-num": n <= 9 ? String(n) : null, "aria-label": fala, "data-fala": fala },
+      el("span", { class: "num", "aria-hidden": "true" }, String(n)),
+      visualDe(op, ""),
+      op.texto ? el("span", { class: "opcao-texto" }, op.texto) : null,
+      op.emoji ? rotuloSentimento(op.emoji) : null,
+      op.balao ? el("span", { class: "opcao-texto" }, NOMES_BALOES[op.balao]) : null);
+    b.addEventListener("click", () => aoEscolher(op, b, grade, opcoes));
+    grade.append(b);
+  });
+  return { grade, falas, opcoes };
+}
+
+// Marca a opção certa com a borda pontilhada (ajuda depois de 2 erros).
+function marcarCerta(grade, opcoes) {
+  const certa = Array.from(grade.children).find((x, j) => opcoes[j].certa);
+  if (certa) certa.classList.add("ajuda");
+}
+
 Motores.escolha = function (et, ctl, intro) {
   const area = ctl.area;
   const titulo = el("h2", { class: "pergunta", tabindex: "-1" }, et.pergunta);
@@ -247,47 +332,82 @@ Motores.escolha = function (et, ctl, intro) {
   let falaFigura = "";
   if (et.mostrar) {
     area.append(figuraDe(et.mostrar));
-    falaFigura = (et.mostrar.noticia ? "" : "Imagem: ") + descricaoDe(et.mostrar) + ". ";
+    falaFigura = (et.mostrar.noticia ? "" : "Imagem: ") + descricaoDe(et.mostrar);
   }
-  const opcoes = et.manterOrdem ? et.opcoes.slice() : embaralhar(et.opcoes);
-  const temImagem = opcoes.some(o => o.desenho || o.icone || o.emoji || o.balao);
-  const grade = el("div", { class: "opcoes " + (temImagem ? "com-imagem" : "so-texto") + (opcoes.length === 2 ? " duas" : ""), role: "group", "aria-label": "Opções" });
-  const prefixo = et.prefixo || "Opção";
   let resolvido = false;
-  const falas = [];
-  opcoes.forEach((op, k) => {
-    const n = k + 1;
-    let desc = descricaoDe(op);
-    if (op.texto && (op.desenho || op.icone) && op.descricao) desc = op.texto + " " + op.descricao;
-    if (op.emoji && Config.v.modoCalmo && SENTIMENTOS[op.emoji]) desc = SENTIMENTOS[op.emoji].exemplo;
-    const fala = `${prefixo} ${n}: ${desc}`;
-    falas.push(fala);
-    const b = el("button", { class: "opcao", type: "button", "data-num": String(n), "aria-label": fala, "data-fala": fala },
-      el("span", { class: "num", "aria-hidden": "true" }, String(n)),
-      visualDe(op, ""),
-      op.texto ? el("span", { class: "opcao-texto" }, op.texto) : null,
-      op.emoji ? rotuloSentimento(op.emoji) : null,
-      op.balao ? el("span", { class: "opcao-texto" }, NOMES_BALOES[op.balao]) : null);
-    b.addEventListener("click", () => {
+  const g = grupoOpcoes(et.opcoes, et.prefixo, (op, b, grade, opcoes) => {
+    if (resolvido) return;
+    if (op.certa) {
+      resolvido = true;
+      b.classList.add("certa");
+      grade.querySelectorAll(".opcao").forEach(x => { if (x !== b) x.setAttribute("aria-disabled", "true"); });
+      ctl.etapaConcluida(et.acerto);
+    } else {
+      b.classList.add("tentada");
+      ctl.errou(op.dica || et.dica, () => marcarCerta(grade, opcoes));
+    }
+  }, et.manterOrdem);
+  area.append(g.grade);
+  const fala = juntar([intro, falaFigura, et.pergunta]) + " " + juntar(g.falas) + " Escolha com as setas e Enter, ou aperte o número.";
+  ctl.apresentar(titulo, fala);
+};
+
+/* ----- AVISO: montar um aviso da escola, uma parte de cada vez ----- */
+Motores.aviso = function (et, ctl, intro) {
+  const area = ctl.area;
+  const titulo = el("h2", { class: "pergunta", tabindex: "-1" }, et.pergunta);
+  const situacao = el("p", { class: "situacao" }, html(Desenho.picto("aviso")), el("span", null, et.situacao));
+  const painel = el("div", { class: "aviso-painel" });
+  const cartaz = el("div", { class: "aviso-cartaz", "aria-label": "Aviso montado até agora" });
+  area.append(titulo, situacao, el("div", { class: "aviso-grade" }, painel, cartaz));
+  const valores = {};
+  let j = 0;
+
+  function desenharCartaz() {
+    cartaz.textContent = "";
+    cartaz.append(el("p", { class: "aviso-rotulo" }, "AVISO"));
+    cartaz.append(el("h3", { class: valores.titulo ? "" : "vazio-aviso" }, valores.titulo ? valores.titulo.texto : "Título?"));
+    if (valores.imagem) { const v = visualDe(valores.imagem, descricaoDe(valores.imagem)); if (v) cartaz.append(v); }
+    else cartaz.append(el("div", { class: "aviso-imagem-vazia" }, "Imagem?"));
+    const lista = el("dl");
+    [["oque", "O quê"], ["quando", "Quando"], ["onde", "Onde"]].forEach(([c, n]) => {
+      lista.append(el("dt", null, n + ":"), el("dd", { class: valores[c] ? "" : "vazio-aviso" }, valores[c] ? valores[c].texto : "?"));
+    });
+    cartaz.append(lista);
+  }
+
+  function mostrarPasso(primeiro) {
+    const passo = et.passos[j];
+    painel.textContent = "";
+    ctl.tentativas = 0;
+    const sub = el("h3", { class: "subpergunta", tabindex: "-1" }, `${j + 1}. ${passo.pergunta}`);
+    let resolvido = false;
+    const g = grupoOpcoes(passo.opcoes, passo.prefixo, (op, b, grade, opcoes) => {
       if (resolvido) return;
       if (op.certa) {
         resolvido = true;
-        b.classList.add("certa");
-        grade.querySelectorAll(".opcao").forEach(x => { if (x !== b) x.setAttribute("aria-disabled", "true"); });
-        ctl.etapaConcluida(et.acerto);
+        valores[passo.campo] = op;
+        desenharCartaz();
+        Som.tocar("clique");
+        ctl.limparRetorno();
+        j++;
+        if (j >= et.passos.length) { painel.textContent = ""; painel.append(el("p", { class: "subpergunta" }, "O aviso está pronto! Veja como ficou.")); ctl.etapaConcluida(et.acerto); return; }
+        const t = `Certo! ${passo.nome}: ${descricaoDe(op)}.`;
+        mostrarPasso(false);
+        Voz.falar(t + " " + Voz.ultima);
+        anunciar(t);
       } else {
         b.classList.add("tentada");
-        ctl.errou(op.dica || et.dica, () => {
-          const certa = Array.from(grade.children).find((x, j) => opcoes[j].certa);
-          if (certa) certa.classList.add("ajuda");
-        });
+        ctl.errou(op.dica || passo.dica, () => marcarCerta(grade, opcoes));
       }
     });
-    grade.append(b);
-  });
-  area.append(grade);
-  const fala = (intro ? intro + " " : "") + falaFigura + et.pergunta + " " + juntar(falas) + " Escolha com as setas e Enter, ou aperte o número.";
-  ctl.apresentar(titulo, fala);
+    painel.append(sub, g.grade);
+    const fala = juntar([sub.textContent]) + " " + juntar(g.falas);
+    if (primeiro) ctl.apresentar(titulo, juntar([intro, et.pergunta, "O que vai acontecer: " + et.situacao]) + " " + fala, () => juntar(["O que vai acontecer: " + et.situacao, fala]));
+    else { focarSemFala(sub); Voz.ultima = fala; anunciar(fala); Teclado.ajuda = () => juntar(["O que vai acontecer: " + et.situacao, fala]); }
+  }
+  desenharCartaz();
+  mostrarPasso(true);
 };
 
 /* ----- ORDENAR: escolher o que vem primeiro, depois o seguinte... ----- */

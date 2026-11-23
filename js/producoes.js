@@ -130,7 +130,7 @@ const Produtor = {
       const multipla = passo.tipo === "multipla";
       let escolhidos = multipla ? (passo.valorAtual || []).slice() : null;
       const titulo = el("h2", { class: "pergunta", tabindex: "-1" }, passo.titulo);
-      const grade = el("div", { class: "opcoes com-imagem escolhas-producao" + (passo.pequenas ? " pequenas" : ""), role: "group", "aria-label": passo.titulo });
+      const grade = el("div", { class: "opcoes " + (passo.soTexto ? "so-texto" : "com-imagem escolhas-producao"), role: "group", "aria-label": passo.titulo });
       const falas = [];
       passo.opcoes.forEach((op, k) => {
         const n = k + 1;
@@ -307,3 +307,118 @@ function descreverProducao(p) {
   const def = DEFINICOES[p.tipo];
   return def ? def.descrever(p.dados, p.nome) : "";
 }
+
+/* ============================================================
+   FOTONOVELA (2º ano)
+   ============================================================ */
+const VERBOS_BALAO = { fala: "fala", pensamento: "pensa", grito: "grita", cochicho: "cochicha" };
+const SENTIMENTO_BALAO = { fala: "feliz", pensamento: "calmo", grito: "surpreso", cochicho: "calmo" };
+const POSICOES_X = { 1: [200], 2: [140, 270], 3: [90, 200, 310] };
+
+// Um quadro: cena desenhada + balão com o texto por cima.
+function quadroFotonovela(q, numero) {
+  const caixa = el("div", { class: "quadro" });
+  caixa.innerHTML = Desenho.cena({ cenario: q.cenario || "ceu", personagens: q.personagens || [], objetos: q.objetos || [], visao: [-20, -70, 440, 330] });
+  const b = q.balao;
+  if (b && b.tipo) {
+    const n = Math.max(1, Math.min((q.personagens || []).length, 3));
+    const x = ((POSICOES_X[n][b.quem || 0] || 200) + 20) / 440 * 100;
+    const largura = 50;
+    const esquerda = Math.max(2, Math.min(98 - largura, x - largura / 2));
+    const balao = el("div", { class: "balao-html balao-" + b.tipo }, el("span", null, b.fala || "…"));
+    balao.style.left = esquerda + "%";
+    balao.style.width = largura + "%";
+    balao.style.setProperty("--cauda", Math.max(12, Math.min(88, (x - esquerda) / largura * 100)) + "%");
+    caixa.append(balao);
+  }
+  if (numero) caixa.append(el("span", { class: "quadro-num", "aria-hidden": "true" }, String(numero)));
+  return caixa;
+}
+
+DEFINICOES.fotonovela = {
+  nome: "Fotonovela", nomeMural: "fotonovela",
+  inicial: () => ({ titulo: "", cenario: null, personagens: [], quadros: [{}, {}, {}, {}] }),
+  passos(d) {
+    const op = OPCOES_PRODUCAO.fotonovela;
+    const ps = [
+      {
+        tipo: "texto", titulo: "Qual é o título da fotonovela?", rotulo: "Título", max: 40,
+        ajuda: "Escreva um título curto ou clique numa ideia.", sugestoes: op.titulos,
+        valorAtual: d.titulo, aplicar: (v) => { d.titulo = v; }
+      },
+      {
+        tipo: "unica", titulo: "Escolha o lugar da história.",
+        opcoes: op.cenarios.map(c => ({ valor: c, rotulo: nomeCenario(c), visual: Desenho.cena({ cenario: c }), fala: nomeCenario(c) })),
+        valorAtual: d.cenario, aplicar: (v) => { d.cenario = v; }
+      },
+      {
+        tipo: "multipla", titulo: `Escolha 1 ou ${op.maxPersonagens} personagens.`, min: 1, max: op.maxPersonagens,
+        opcoes: op.personagens.map(q => ({ valor: q, rotulo: nomePersonagem(q), visual: Desenho.cena({ personagens: [{ quem: q, sentimento: "feliz" }], visao: q === "cachorro" || q === "gato" ? [100, 120, 200, 150] : [100, 30, 200, 225] }), fala: nomePersonagem(q) })),
+        valorAtual: d.personagens.slice(),
+        aplicar: (v) => { d.personagens = v; d.quadros.forEach(qd => { if (qd.quem >= v.length) qd.quem = 0; }); }
+      }
+    ];
+    d.quadros.forEach((qd, k) => {
+      const n = k + 1;
+      if (d.personagens.length > 1) ps.push({
+        tipo: "unica", titulo: `Quadro ${n} de 4: quem fala?`,
+        opcoes: d.personagens.map((q, i) => ({ valor: i, rotulo: nomePersonagem(q), visual: Desenho.cena({ personagens: [{ quem: q, sentimento: "feliz" }], visao: q === "cachorro" || q === "gato" ? [100, 120, 200, 150] : [100, 30, 200, 225] }), fala: nomePersonagem(q) })),
+        valorAtual: qd.quem, aplicar: (v) => { qd.quem = v; }
+      });
+      ps.push({
+        tipo: "unica", titulo: `Quadro ${n} de 4: qual balão?`,
+        opcoes: Object.keys(op.baloes).map(t => ({ valor: t, rotulo: NOMES_BALOES[t], visual: Desenho.balao(t), fala: `${NOMES_BALOES[t]}: ${op.baloes[t]}` })),
+        valorAtual: qd.tipo, aplicar: (v) => { if (qd.tipo !== v) { qd.fala = ""; qd.escrever = false; } qd.tipo = v; }
+      });
+      if (qd.tipo) {
+        const falas = op.falas[qd.tipo] || [];
+        ps.push({
+          tipo: "unica", soTexto: true, titulo: `Quadro ${n} de 4: qual é a fala?`,
+          opcoes: falas.map(f => ({ valor: f.texto, rotulo: f.texto })).concat([{ valor: "__escrever", rotulo: "Quero escrever a minha fala", fala: "Quero escrever a minha fala." }]),
+          valorAtual: qd.escrever ? "__escrever" : qd.fala,
+          aplicar: (v) => {
+            if (v === "__escrever") { qd.escrever = true; qd.fala = qd.fala && !falas.some(f => f.texto === qd.fala) ? qd.fala : ""; qd.sentimento = null; }
+            else { qd.escrever = false; qd.fala = v; const f = falas.find(x => x.texto === v); qd.sentimento = f ? f.sentimento : null; }
+          }
+        });
+        if (qd.escrever) ps.push({
+          tipo: "texto", titulo: `Quadro ${n} de 4: escreva a fala.`, rotulo: "Fala do balão", max: 60,
+          ajuda: "Escreva uma frase curta.", valorAtual: qd.fala, aplicar: (v) => { qd.fala = v; }
+        });
+      }
+    });
+    return ps;
+  },
+  quadro(d, k) {
+    const qd = d.quadros[k];
+    const pers = d.personagens.map((q, i) => ({ quem: q, sentimento: i === (qd.quem || 0) && qd.tipo ? (qd.sentimento || SENTIMENTO_BALAO[qd.tipo]) : "feliz" }));
+    return { cenario: d.cenario, personagens: pers, balao: qd.tipo ? { tipo: qd.tipo, quem: qd.quem || 0, fala: qd.fala } : null };
+  },
+  descreverQuadro(d, k) {
+    const qd = d.quadros[k];
+    if (!qd.tipo || !d.personagens.length) return `Quadro ${k + 1}: ainda vazio.`;
+    const q = d.personagens[qd.quem || 0];
+    return `Quadro ${k + 1}: ${artigo(q) === "a" ? "A" : "O"} ${nomePersonagem(q)} ${VERBOS_BALAO[qd.tipo]}: ${qd.fala || "..."}`;
+  },
+  renderizar(d, leitura) {
+    const caixa = el("div", { class: "fotonovela", role: "group", "aria-label": "Fotonovela: " + (d.titulo || "sem título") });
+    caixa.append(el("h3", { class: "fotonovela-titulo" }, d.titulo || "Título?"));
+    const grade = el("div", { class: "quadros" });
+    d.quadros.forEach((_, k) => {
+      const q = quadroFotonovela(this.quadro(d, k), k + 1);
+      q.setAttribute("role", "img");
+      q.setAttribute("aria-label", juntar([this.descreverQuadro(d, k)]));
+      grade.append(q);
+    });
+    caixa.append(grade);
+    return caixa;
+  },
+  previa(d) { return this.renderizar(d); },
+  descrever(d, nome) {
+    const partes = [`Fotonovela: ${d.titulo || "sem título"}` + (nome ? `, feita por ${nome}` : "")];
+    if (d.cenario) partes.push(`A história acontece ${preposicaoCenario(d.cenario)}`);
+    if (d.personagens.length) partes.push("Personagens: " + d.personagens.map(q => `${artigo(q)} ${nomePersonagem(q)}`).join(" e "));
+    d.quadros.forEach((_, k) => partes.push(this.descreverQuadro(d, k)));
+    return juntar(partes);
+  }
+};

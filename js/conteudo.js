@@ -348,6 +348,200 @@ const ESTUDIOS = [
         }
       ]
     }
+  },
+  /* ---------------------------------------------------------- */
+  /*  2º ANO — ESTÚDIO DE RÁDIO E FOTONOVELA                     */
+  /* ---------------------------------------------------------- */
+  {
+    ano: 2, id: "radio", nome: "Estúdio de Rádio e Fotonovela", tema: "Contar o que acontece",
+    cor: "laranja", picto: "microfone", maiusculas: false,
+    boasVindas: "Bem-vindo ao Estúdio de Rádio e Fotonovela! Aqui a gente conta o que acontece na escola.",
+    comoJogar: [
+      { picto: "olho", texto: "Leia a pergunta e olhe as imagens." },
+      { picto: "clique", texto: "Clique na resposta certa." },
+      { picto: "ordem", texto: "Para pôr em ordem, escolha o que vem primeiro, depois o seguinte." },
+      { picto: "lampada", texto: "Errou? Leia a dica e tente de novo." },
+      { picto: "mural", texto: "No fim, crie uma fotonovela para o Mural." }
+    ],
+    atividades: [
+      {
+        id: "baloes", nome: "Balões da fotonovela", picto: "balao",
+        intro: "Na fotonovela, os balões mostram o que os personagens falam ou pensam. Cada balão tem um jeito.",
+        etapas: [
+          {
+            tipo: "escolha", prefixo: "Balão",
+            pergunta: "A Bia está pensando no lanche, sem falar nada. Qual balão ela usa?",
+            mostrar: { desenho: { cenario: "refeitorio", personagens: [{ quem: "bia", sentimento: "calmo" }] }, descricao: "A Bia no refeitório, de olhos fechados, imaginando o lanche." },
+            dica: "Quando a pessoa só pensa, o balão parece uma nuvem com bolinhas.",
+            acerto: "Isso! O balão de pensamento mostra o que a pessoa pensa.",
+            opcoes: [{ balao: "fala", descricao: "Balão de fala: redondo, com uma pontinha." }, { balao: "pensamento", descricao: "Balão de pensamento: parece uma nuvem, com bolinhas.", certa: true }, { balao: "grito", descricao: "Balão de grito: cheio de pontas." }, { balao: "cochicho", descricao: "Balão de cochicho: com a borda tracejada." }]
+          },
+          {
+            tipo: "escolha", prefixo: "Balão",
+            pergunta: "O Davi viu o gol do time e gritou bem alto. Qual balão ele usa?",
+            mostrar: { desenho: { cenario: "quadra", personagens: [{ quem: "davi", sentimento: "surpreso" }], objetos: [{ obj: "bola", x: 300, frente: true }] }, descricao: "O Davi na quadra, com a boca bem aberta, ao lado da bola." },
+            dica: "Grito é falar muito alto. O balão tem muitas pontas.",
+            acerto: "Muito bem! O balão de grito tem pontas.",
+            opcoes: [{ balao: "fala", descricao: "Balão de fala: redondo, com uma pontinha." }, { balao: "pensamento", descricao: "Balão de pensamento: parece uma nuvem, com bolinhas." }, { balao: "grito", descricao: "Balão de grito: cheio de pontas.", certa: true }, { balao: "cochicho", descricao: "Balão de cochicho: com a borda tracejada." }]
+          },
+          {
+            tipo: "escolha", prefixo: "Balão",
+            pergunta: "O Robô conta um segredo bem baixinho para a Lia. Qual balão ele usa?",
+            mostrar: { desenho: { cenario: "escola", personagens: [{ quem: "robo", sentimento: "calmo" }, { quem: "menina", sentimento: "surpreso" }] }, descricao: "O Robô perto da Lia, falando baixinho." },
+            dica: "Cochicho é falar bem baixinho. O balão tem a borda tracejada, feita de risquinhos.",
+            acerto: "Isso! O balão de cochicho tem a borda tracejada.",
+            opcoes: [{ balao: "fala", descricao: "Balão de fala: redondo, com uma pontinha." }, { balao: "pensamento", descricao: "Balão de pensamento: parece uma nuvem, com bolinhas." }, { balao: "grito", descricao: "Balão de grito: cheio de pontas." }, { balao: "cochicho", descricao: "Balão de cochicho: com a borda tracejada.", certa: true }]
+          },
+          {
+            tipo: "escolha", prefixo: "Balão",
+            pergunta: "A professora diz bom dia para a turma, com voz normal. Qual balão ela usa?",
+            mostrar: { desenho: { cenario: "escola", personagens: [{ quem: "professora", sentimento: "feliz" }] }, descricao: "A professora sorrindo na frente da escola." },
+            dica: "Para falar normalmente, usamos o balão redondo com uma pontinha.",
+            acerto: "Muito bem! O balão de fala é o mais usado.",
+            opcoes: [{ balao: "fala", descricao: "Balão de fala: redondo, com uma pontinha.", certa: true }, { balao: "pensamento", descricao: "Balão de pensamento: parece uma nuvem, com bolinhas." }, { balao: "grito", descricao: "Balão de grito: cheio de pontas." }, { balao: "cochicho", descricao: "Balão de cochicho: com a borda tracejada." }]
+          },
+          {
+            tipo: "escolha", pergunta: "Qual fala combina com este quadro?",
+            mostrar: { quadro: { cenario: "parque", personagens: [{ quem: "robo", sentimento: "triste" }], objetos: [{ obj: "sorveteChao", x: 270, frente: true }], balao: { tipo: "fala", fala: "?" } }, descricao: "Quadro de fotonovela: o Robô está triste e o sorvete dele caiu no chão. O balão de fala está vazio." },
+            dica: "Olhe o rosto do Robô e o sorvete no chão.",
+            acerto: "Isso! O Robô está triste porque o sorvete caiu.",
+            opcoes: [{ texto: "Oba! Que dia lindo!" }, { texto: "Ah, não! Meu sorvete caiu!", certa: true }, { texto: "Vamos jogar bola?" }]
+          },
+          {
+            tipo: "escolha", pergunta: "Qual fala combina com este quadro?",
+            mostrar: { quadro: { cenario: "casa", personagens: [{ quem: "davi", sentimento: "medo" }], balao: { tipo: "grito", fala: "?" } }, descricao: "Quadro de fotonovela: o Davi está com medo, em casa. O balão de grito está vazio." },
+            dica: "O Davi está com medo e o balão é de grito.",
+            acerto: "Muito bem! Quem leva um susto pode gritar.",
+            opcoes: [{ texto: "Bom dia, turma!" }, { texto: "Estou com sono." }, { texto: "Socorro! Uma aranha!", certa: true }]
+          },
+          {
+            tipo: "escolha", pergunta: "Qual fala combina com este quadro?",
+            mostrar: { quadro: { cenario: "refeitorio", personagens: [{ quem: "menino", sentimento: "calmo" }], balao: { tipo: "pensamento", fala: "?" } }, descricao: "Quadro de fotonovela: o Téo no refeitório, de olhos fechados. O balão de pensamento está vazio." },
+            dica: "O Téo está no refeitório e está pensando.",
+            acerto: "Isso! No refeitório, ele pensa no lanche.",
+            opcoes: [{ texto: "Hum... qual será o lanche de hoje?", certa: true }, { texto: "Gol!" }, { texto: "Silêncio na sala de leitura." }]
+          }
+        ]
+      },
+      {
+        id: "entrevista", nome: "Entrevistador", picto: "microfone",
+        intro: "Você vai preparar uma entrevista com alguém que trabalha na escola. Uma boa entrevista ajuda a conhecer o trabalho da pessoa.",
+        perguntaPessoa: "Quem você quer entrevistar?",
+        abertura: "Bom dia! Qual é o seu nome?",
+        fechamento: "Obrigado pela entrevista!",
+        dicaClassificar: "Uma pergunta boa ajuda a conhecer o trabalho da pessoa na escola.",
+        dicaOrdenar: "A entrevista começa com o cumprimento: Bom dia! E termina com o agradecimento.",
+        categorias: [
+          { id: "boa", nome: "Pergunta boa", descricao: "Ajuda a conhecer o trabalho.", picto: "certo" },
+          { id: "ruim", nome: "Não combina", descricao: "Não ajuda a conhecer o trabalho.", picto: "xis" }
+        ],
+        // Para acrescentar uma pessoa, copie um bloco { ... } e troque os textos.
+        pessoas: [
+          {
+            nome: "a merendeira", quem: "merendeira", cenario: "refeitorio", descricao: "A merendeira, de touca e avental branco, no refeitório.",
+            boas: ["O que você faz na cozinha da escola?", "Qual comida as crianças mais gostam?", "Do que você mais gosta no seu trabalho?"],
+            ruins: ["Qual é a cor do meu tênis?", "Você sabe voar?", "Quantos dinossauros cabem na cozinha?"]
+          },
+          {
+            nome: "o porteiro", quem: "porteiro", cenario: "portao", descricao: "O porteiro, de boné azul, no portão da escola.",
+            boas: ["Como você cuida da entrada da escola?", "A que horas o portão abre?", "Do que você mais gosta no seu trabalho?"],
+            ruins: ["A lua é feita de queijo?", "Qual é o nome do meu gato?", "Você prefere sorvete de pedra ou de nuvem?"]
+          },
+          {
+            nome: "a diretora", quem: "diretora", cenario: "escola", descricao: "A diretora, de blusa roxa e crachá, na frente da escola.",
+            boas: ["O que a diretora faz na escola?", "Como você ajuda os professores e os alunos?", "Que projeto novo a escola vai ter este ano?"],
+            ruins: ["Quantos anos tem o meu primo?", "Você já foi à Lua de bicicleta?", "Qual é a cor do meu caderno?"]
+          },
+          {
+            nome: "a professora da sala de leitura", quem: "professora", cenario: "salaLeitura", descricao: "A professora da sala de leitura, de óculos, segurando um livro.",
+            boas: ["Como você escolhe os livros da sala de leitura?", "Qual livro você indica para a nossa turma?", "Como podemos cuidar bem dos livros?"],
+            ruins: ["Os livros sabem dançar?", "Você come livros no almoço?", "Qual é o número do meu sapato?"]
+          }
+        ]
+      },
+      {
+        id: "aviso", nome: "Aviso para o mural", picto: "aviso",
+        intro: "Um aviso conta uma informação importante para todo mundo. Ele precisa dizer o quê, quando e onde.",
+        etapas: [
+          {
+            tipo: "aviso", pergunta: "Monte o aviso da festa junina.",
+            situacao: "A escola vai fazer uma festa junina no sábado, dia 20 de junho, às 10 horas, na quadra.",
+            acerto: "O aviso está pronto! Ele conta o quê, quando e onde.",
+            passos: [
+              { campo: "titulo", nome: "Título", pergunta: "Escolha o título do aviso.", dica: "O título conta logo o assunto do aviso.",
+                opcoes: [{ texto: "Festa junina da escola!", certa: true }, { texto: "Meu cachorro é muito fofo" }, { texto: "Aviso de nada" }] },
+              { campo: "imagem", nome: "Imagem", pergunta: "Escolha a imagem do aviso.", prefixo: "Imagem", dica: "A imagem precisa combinar com a festa junina.",
+                opcoes: [
+                  { desenho: { cenario: "quadra", objetos: [{ obj: "bandeirinhas" }, { obj: "fogueira", x: 200 }] }, descricao: "Bandeirinhas coloridas e uma fogueira na quadra.", certa: true },
+                  { desenho: { cenario: "ceu", objetos: [{ obj: "chuva" }, { obj: "guardaChuva", x: 200 }] }, descricao: "Um guarda-chuva na chuva." },
+                  { desenho: { cenario: "salaLeitura", objetos: [{ obj: "livros", x: 200 }] }, descricao: "Uma pilha de livros na sala de leitura." }
+                ] },
+              { campo: "oque", nome: "O quê", pergunta: "O que vai acontecer?", dica: "Leia de novo o que a escola vai fazer.",
+                opcoes: [{ texto: "Festa junina com comidas e dança.", certa: true }, { texto: "Aula de natação." }, { texto: "Passeio no zoológico." }] },
+              { campo: "quando", nome: "Quando", pergunta: "Quando vai acontecer?", dica: "Procure o dia e a hora no texto.",
+                opcoes: [{ texto: "Segunda-feira, de noite." }, { texto: "Sábado, 20 de junho, às 10 horas.", certa: true }, { texto: "Ontem." }] },
+              { campo: "onde", nome: "Onde", pergunta: "Onde vai acontecer?", dica: "Procure o lugar no texto.",
+                opcoes: [{ texto: "No refeitório." }, { texto: "Na praia." }, { texto: "Na quadra da escola.", certa: true }] }
+            ]
+          },
+          {
+            tipo: "aviso", pergunta: "Monte o aviso da troca de livros.",
+            situacao: "Na sexta-feira, dia 5 de maio, às 14 horas, vai ter troca de livros na sala de leitura. Cada criança traz um livro e leva outro.",
+            acerto: "Muito bem! Agora todos sabem o quê, quando e onde.",
+            passos: [
+              { campo: "titulo", nome: "Título", pergunta: "Escolha o título do aviso.", dica: "O título conta logo o assunto do aviso.",
+                opcoes: [{ texto: "Hoje tem bolo" }, { texto: "Troca de livros!", certa: true }, { texto: "Cuidado com o cachorro" }] },
+              { campo: "imagem", nome: "Imagem", pergunta: "Escolha a imagem do aviso.", prefixo: "Imagem", dica: "A imagem precisa combinar com livros.",
+                opcoes: [
+                  { desenho: { cenario: "quadra", objetos: [{ obj: "bola", x: 200 }] }, descricao: "Uma bola na quadra." },
+                  { desenho: { cenario: "salaLeitura", objetos: [{ obj: "livros", x: 200 }] }, descricao: "Uma pilha de livros coloridos na sala de leitura.", certa: true }
+                ] },
+              { campo: "oque", nome: "O quê", pergunta: "O que vai acontecer?", dica: "Leia de novo: o que cada criança traz?",
+                opcoes: [{ texto: "Campeonato de futebol." }, { texto: "Troca de livros: traga um e leve outro.", certa: true }] },
+              { campo: "quando", nome: "Quando", pergunta: "Quando vai acontecer?", dica: "Procure o dia e a hora no texto.",
+                opcoes: [{ texto: "Sexta-feira, 5 de maio, às 14 horas.", certa: true }, { texto: "Domingo de manhã." }, { texto: "No Natal." }] },
+              { campo: "onde", nome: "Onde", pergunta: "Onde vai acontecer?", dica: "Procure o lugar no texto.",
+                opcoes: [{ texto: "No parque." }, { texto: "Na sala de leitura.", certa: true }, { texto: "No portão." }] }
+            ]
+          }
+        ]
+      },
+      {
+        id: "roteiroRadio", nome: "Roteiro de rádio", picto: "radio",
+        intro: "Um programa de rádio tem partes, uma depois da outra. Vamos organizar o programa da Rádio do Robô.",
+        etapas: [
+          {
+            tipo: "ordenar", prefixo: "Parte",
+            pergunta: "Coloque o programa de rádio em ordem.",
+            dica: "O programa começa com a vinheta e termina com a despedida.",
+            acerto: "O programa está pronto para ir ao ar!",
+            itens: [
+              { texto: "Vinheta", descricao: "Uma música curtinha com o nome da rádio: Rádio do Robô!" },
+              { texto: "Apresentação", descricao: "Bom dia! Eu sou a Bia e este é o programa da nossa escola." },
+              { texto: "Notícia", descricao: "Hoje a turma do 2º ano plantou flores na horta." },
+              { texto: "Música", descricao: "Agora, uma música para alegrar o recreio." },
+              { texto: "Despedida", descricao: "O programa terminou. Tchau e até amanhã!" }
+            ]
+          },
+          {
+            tipo: "escolha", pergunta: "Para que serve a vinheta?",
+            dica: "A vinheta toca bem no começo do programa.",
+            acerto: "Isso! A vinheta avisa que o programa vai começar e diz o nome da rádio.",
+            opcoes: [{ texto: "Para avisar que o programa vai começar e dizer o nome da rádio.", certa: true }, { texto: "Para dar a notícia do dia." }, { texto: "Para dizer tchau." }]
+          },
+          {
+            tipo: "escolha", pergunta: "Na rádio, as pessoas só escutam. Como contar que o sol está forte?",
+            dica: "Quem escuta o rádio não vê nada. As palavras precisam explicar tudo.",
+            acerto: "Muito bem! No rádio, as palavras precisam explicar tudo.",
+            opcoes: [{ texto: "Olhem só esse sol!" }, { texto: "Hoje o sol está muito forte. Usem boné e bebam água.", certa: true }, { texto: "Vejam a foto." }]
+          }
+        ]
+      },
+      {
+        id: "fotonovela", nome: "Minha fotonovela", picto: "balao", producao: "fotonovela",
+        intro: "Agora é a sua vez! Crie uma fotonovela de 4 quadros para o Mural da Emissora."
+      }
+    ]
   }
 ];
 
@@ -361,5 +555,47 @@ const OPCOES_PRODUCAO = {
     personagens: ["robo", "menina", "menino", "bia", "davi", "professora", "cachorro", "gato"],
     maxPersonagens: 3,
     sentimentos: ["feliz", "triste", "bravo", "medo", "surpreso", "calmo"]
+  },
+
+  // 2º ano: fotonovela de 4 quadros
+  fotonovela: {
+    titulos: ["O sorvete perdido", "Um dia no parque", "O segredo do Robô", "A grande descoberta"],
+    cenarios: ["escola", "parque", "casa", "quadra", "salaLeitura", "refeitorio"],
+    personagens: ["robo", "menina", "menino", "bia", "davi", "professora", "merendeira", "porteiro", "diretora", "cachorro", "gato"],
+    maxPersonagens: 2,
+    // explicação de cada balão (lida pela voz)
+    baloes: {
+      fala: "para falar normalmente.",
+      pensamento: "para mostrar o que o personagem pensa.",
+      grito: "para falar muito alto.",
+      cochicho: "para falar bem baixinho."
+    },
+    // falas prontas para cada balão; sentimento muda o rosto de quem fala
+    falas: {
+      fala: [
+        { texto: "Oi! Tudo bem?", sentimento: "feliz" },
+        { texto: "Vamos brincar no recreio?", sentimento: "feliz" },
+        { texto: "Você me empresta o lápis?", sentimento: "calmo" },
+        { texto: "Obrigado pela ajuda!", sentimento: "feliz" },
+        { texto: "Que pena, começou a chover.", sentimento: "triste" }
+      ],
+      pensamento: [
+        { texto: "Será que vai chover?", sentimento: "calmo" },
+        { texto: "Que ideia boa!", sentimento: "feliz" },
+        { texto: "Onde eu deixei meu caderno?", sentimento: "surpreso" },
+        { texto: "Estou com saudade da minha avó.", sentimento: "triste" }
+      ],
+      grito: [
+        { texto: "Gol!", sentimento: "feliz" },
+        { texto: "Socorro! Uma aranha!", sentimento: "medo" },
+        { texto: "Cuidado com a bola!", sentimento: "surpreso" },
+        { texto: "Oba! Chegou o lanche!", sentimento: "feliz" }
+      ],
+      cochicho: [
+        { texto: "Tenho um segredo para contar.", sentimento: "calmo" },
+        { texto: "Fale baixinho, a professora está lendo.", sentimento: "calmo" },
+        { texto: "Vamos fazer uma surpresa para a turma?", sentimento: "feliz" }
+      ]
+    }
   }
 };

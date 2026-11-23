@@ -413,3 +413,70 @@ body.contraste .estrela.vazia { color: #666; }
 body.contraste .estrela.cheia { color: #ffe600; }
 body.contraste .link-professor { color: #fff; }
 body.contraste kbd { background: #000; color: #fff; }
+
+/* ============================================================
+   FOTONOVELA
+   ============================================================ */
+.quadro { position: relative; container-type: inline-size; border: 4px solid #222; border-radius: 6px; overflow: hidden; background: #fff; }
+.quadro > svg { width: 100%; height: auto; }
+.quadro-num { position: absolute; bottom: 4px; left: 4px; background: #222; color: #fff; font-weight: bold; border-radius: 6px; padding: 0 .4em; font-size: .9rem; }
+.balao-html {
+  position: absolute; top: 3%; min-height: 22%;
+  display: flex; align-items: center; justify-content: center; text-align: center;
+  padding: .4em .7em; font-weight: bold; color: #111; line-height: 1.15;
+  font-size: .9rem; font-size: clamp(9px, 5.2cqi, 30px);
+  background: #fff; border: 3px solid #222; border-radius: 50%;
+  text-transform: none;
+}
+body.ano1 .balao-html { text-transform: uppercase; }
+.balao-html::after {
+  content: ""; position: absolute; bottom: -14px; left: var(--cauda, 50%); margin-left: -8px;
+  border: 8px solid transparent; border-top: 14px solid #222; border-bottom: 0;
+}
+.balao-fala { border-radius: 50% / 45%; }
+.balao-pensamento { border-radius: 45%; box-shadow: 0 0 0 3px #222 inset; border: none; }
+.balao-pensamento::after { border: 3px solid #222; background: #fff; width: 12px; height: 12px; border-radius: 50%; bottom: -18px; margin-left: -6px; }
+.balao-pensamento::before { content: ""; position: absolute; left: calc(var(--cauda, 50%) - 14px); bottom: -32px; width: 8px; height: 8px; border-radius: 50%; border: 3px solid #222; background: #fff; }
+.balao-grito {
+  border: none; border-radius: 0; background: #222; padding: 1em 1.2em;
+  clip-path: polygon(50% 0, 58% 14%, 74% 3%, 76% 20%, 95% 14%, 88% 32%, 100% 45%, 87% 56%, 97% 74%, 78% 72%, 74% 92%, 60% 78%, 48% 100%, 40% 80%, 24% 94%, 22% 74%, 3% 80%, 12% 60%, 0 46%, 13% 34%, 4% 15%, 24% 20%, 28% 2%, 41% 14%);
+  text-transform: uppercase;
+}
+.balao-grito > span { position: relative; z-index: 1; }
+.balao-grito::before {
+  content: ""; position: absolute; inset: 4px; background: #fff59d;
+  clip-path: polygon(50% 0, 58% 14%, 74% 3%, 76% 20%, 95% 14%, 88% 32%, 100% 45%, 87% 56%, 97% 74%, 78% 72%, 74% 92%, 60% 78%, 48% 100%, 40% 80%, 24% 94%, 22% 74%, 3% 80%, 12% 60%, 0 46%, 13% 34%, 4% 15%, 24% 20%, 28% 2%, 41% 14%);
+}
+.balao-grito::after { display: none; }
+.balao-cochicho { border-style: dashed; font-weight: normal; font-style: italic; }
+.balao-cochicho::after { border-top-color: #777; }
+
+.fotonovela-titulo { text-align: center; font-size: 1.4rem; margin: 0 0 .5rem; }
+.quadros { display: grid; grid-template-columns: 1fr 1fr; gap: .5rem; }
+.pequena .fotonovela-titulo { font-size: 1.05rem; }
+.pequena .quadros { gap: .25rem; }
+.pequena .quadro { border-width: 2px; }
+.pequena .balao-html { border-width: 2px; padding: .2em .3em; }
+.tela-cheia .quadros, .grande .quadros { max-width: 1100px; margin: 0 auto; }
+.tela-cheia .fotonovela-titulo { font-size: 2.2rem; }
+.opcoes.baloes .opcao .visual svg { max-width: 160px; margin: 0 auto; }
+.figura .quadro { max-width: 420px; margin: 0 auto; }
+
+/* ============================================================
+   AVISO
+   ============================================================ */
+.situacao { display: flex; gap: .7rem; align-items: center; font-size: 1.2rem; background: var(--destaque-claro); border-radius: 14px; padding: .8rem 1rem; margin: 0 0 1rem; }
+.situacao .picto { color: var(--destaque); width: 2.2rem; height: 2.2rem; }
+.aviso-grade { display: grid; grid-template-columns: minmax(0, 3fr) minmax(220px, 2fr); gap: 1rem; align-items: start; }
+.aviso-cartaz { background: #fffdf2; border: 4px solid #e0a800; border-radius: 10px; padding: 1rem; box-shadow: 4px 4px 0 rgba(0, 0, 0, .12); }
+.aviso-rotulo { margin: 0; font-weight: bold; letter-spacing: .15em; color: var(--suave); }
+.aviso-cartaz h3 { font-size: 1.5rem; margin: .2rem 0 .6rem; }
+.aviso-cartaz .visual svg { width: 100%; height: auto; border-radius: 8px; }
+.aviso-imagem-vazia { border: 3px dashed var(--borda); border-radius: 8px; padding: 2rem; text-align: center; color: var(--suave); }
+.aviso-cartaz dl { display: grid; grid-template-columns: auto 1fr; gap: .3rem .6rem; margin: .8rem 0 0; }
+.aviso-cartaz dt { font-weight: bold; }
+.aviso-cartaz dd { margin: 0; }
+.vazio-aviso { color: var(--suave); }
+body.calmo .aviso-cartaz { border-color: var(--borda); box-shadow: none; }
+body.contraste .aviso-cartaz, body.contraste .quadro { background: #000; color: #fff; border-color: #fff; }
+@media (max-width: 760px) { .aviso-grade { grid-template-columns: 1fr; } }
